@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const fs = require('node:fs');
+const { rejects } = require('assert');
 
 const app = express()
 
@@ -19,6 +20,18 @@ const readFile = (filename) => {
             const tasks = JSON.parse(data)
             resolve(tasks)
         })
+    })
+}
+
+const writeFile = (filename, data) => {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(filename, data, err => {
+            if (err) {
+              console.error(err);
+              return
+            }           
+            resolve(true)
+        });
     })
 }
 
@@ -44,17 +57,9 @@ app.post('/', (req, res) => {
         }
         tasks.push(newTask)
         const data = JSON.stringify(tasks, null, 2)
-        
-        fs.writeFile('./tasks.json', data, err => {
-            if (err) {
-              console.error(err);
-              return
-            } else {
-              res.redirect('/')
-            }
-        });
-
-    })
+        writeFile('./tasks.json', data)
+        res.redirect('/')
+    });
 })
 
 app.get('/delete-task/:taskId', (req, res) => {
@@ -67,15 +72,8 @@ app.get('/delete-task/:taskId', (req, res) => {
                } 
             });
             const data = JSON.stringify(tasks, null, 2)
-        
-            fs.writeFile('./tasks.json', data, err => {
-                if (err) {
-                    console.error(err);
-                return
-                } else {
-                    res.redirect('/')
-                }
-            });
+            writeFile('./tasks.json', data)
+            res.redirect('/')
         })
 })
 
