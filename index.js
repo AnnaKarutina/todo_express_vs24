@@ -16,26 +16,36 @@ const readFile = (filename) => {
                 console.error(error)
                 return
             }
-            const tasks = data.split('\n')
+            const tasks = JSON.parse(data)
             resolve(tasks)
         })
     })
 }
 
 app.get('/', (req, res) => {
-    readFile('./tasks')
+    readFile('./tasks.json')
       .then((tasks) => {
         res.render('index', {tasks: tasks})
     })
 })
 
 app.post('/', (req, res) => {
-    readFile('./tasks')
+    readFile('./tasks.json')
       .then((tasks) => {
-        tasks.push(req.body.task)
-        const data = tasks.join('\n')
+        let index
+        if(tasks.length === 0){
+            index = 0
+        } else {
+            index = tasks[tasks.length - 1].id + 1
+        }
+        const newTask = {
+            id: index,
+            task: req.body.task
+        }
+        tasks.push(newTask)
+        const data = JSON.stringify(tasks, null, 2)
         
-        fs.writeFile('./tasks', data, err => {
+        fs.writeFile('./tasks.json', data, err => {
             if (err) {
               console.error(err);
               return
