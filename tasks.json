@@ -10,5 +10,13 @@
   {
     "id": 2,
     "task": "Study JS"
+  },
+  {
+    "id": 3,
+    "task": "Study error handling"
+  },
+  {
+    "id": 4,
+    "task": "Control app"
   }
 ]
